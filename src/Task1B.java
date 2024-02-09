@@ -1,6 +1,5 @@
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.regex.PatternSyntaxException;
 
@@ -98,9 +97,6 @@ public class Task1B {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        BigInteger a = null;
-        BigInteger b = null;
-        BigDecimal a1, b1;
         System.out.println("Допустимые команды: ADD, SUB, MULT, DIV, REM, POW");
         System.out.println("Введите 2 целых числа и команду через пробел (например, 1 2 ADD):");
         System.out.println(new Command(sc.nextLine()));
