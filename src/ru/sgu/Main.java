@@ -8,23 +8,24 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         System.out.print("""
                 Выберите задание:
-                    1. Задача с датами
-                    2. Задача с днями недели
-                    3. Задача со строкой
+                    1. Задача с фильтром Stream
+                    2. Задача с поиском элементов в массиве
+                    3. Реализация адаптера
                 Ваш выбор:\040""");
         try {
             switch (scanner.nextInt()) {
                 case 1 -> {
-                    TaskA taskA = new TaskA();
-                    taskA.execute();
+                    TaskA task = new TaskA();
+                    task.execute();
                 }
                 case 2 -> {
                     TaskB taskB = new TaskB();
-                    taskB.execute();
+                    taskB.findNumbers();
                 }
                 case 3 -> {
-                    StringPerformanceTestService test = new StringPerformanceTestService();
-                    test.execute();
+                    Adaptee adaptee = new Adaptee();
+                    Target target = new Adapter(adaptee);
+                    target.request(); // объект target может использовать метод specificRequest() класса Adaptee
                 }
                 default -> System.out.println("Выбор должен быть числом от 1 до 3.");
             }

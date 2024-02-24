@@ -1,42 +1,51 @@
 package ru.sgu;
 
-import java.util.NoSuchElementException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class TaskB {
-    private Day currentDay;
-    Integer daysToAdd;
-
-    enum Day {
-        monday, tuesday, wednesday, thursday, friday, saturday, sunday;
-
-        public Day calculateDay(int daysToAdd) {
-            return values()[(ordinal() + daysToAdd) % values().length];
-        }
-    }
+    private int[] numbers;
 
     public TaskB() {
-        System.out.println("Введите день недели и число:");
         Scanner scanner = new Scanner(System.in);
+        System.out.println("Введите целые числа через пробел:");
+        String input = scanner.nextLine();
         try {
-            String dayOfWeek = scanner.next().toLowerCase();
-            this.daysToAdd = scanner.nextInt();
-            while (this.daysToAdd < 0) {
-                this.daysToAdd = this.daysToAdd + 7;
-            }
-            this.currentDay = Day.valueOf(dayOfWeek);
-        } catch (NoSuchElementException | IllegalArgumentException e) {
+            this.numbers = Arrays.stream(input.split("\\s+"))
+                    .filter(StreamFilter::isInteger)
+                    .mapToInt(Integer::parseInt)
+                    .toArray();
+        } catch (NumberFormatException e) {
             System.out.println(e.getMessage());
             System.exit(1);
         }
         scanner.close();
     }
 
-    public void execute() {
-        if (this.currentDay == null || this.daysToAdd == null) {
-            System.out.println("Нет значения для текущего дня или количества дней, которые должны быть прибавлены.");
-            return;
+    public void findNumbers() {
+        try {
+            System.out.printf("""
+                    Второй наибольший элемент массива: %d
+                    Третий наименьший элемент массива: %d
+                    """, findSecondLargest(), findThirdSmallest());
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
         }
-        System.out.println(currentDay.calculateDay(this.daysToAdd));
+    }
+
+    private int findSecondLargest() {
+        return Arrays.stream(numbers)
+                .sorted()
+                .skip(Math.max(0, numbers.length - 2))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Массив пуст или содержит менее двух элементов."));
+    }
+
+    private int findThirdSmallest() {
+        return Arrays.stream(numbers)
+                .sorted()
+                .skip(2)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Массив пуст или содержит менее трех элементов."));
     }
 }

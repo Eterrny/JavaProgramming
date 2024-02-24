@@ -1,47 +1,52 @@
 package ru.sgu;
 
-import java.time.DateTimeException;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class TaskA {
-    private LocalDate minDate;
-    private LocalDate maxDate;
+    private Stream<Integer> stream;
+    private final Predicate<Integer> predicate;
 
     public TaskA() {
+        this.predicate = n -> n % 2 == 0 || n % 3 == 0;
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите даты в формате \"год месяц день\". Чтобы прекратить ввод, введите 0");
+        System.out.println("Введите целые числа через пробел:");
+        String input = scanner.nextLine();
         try {
-            for (; ; ) {
-                int year = scanner.nextInt();
-                if (year == 0) {
-                    break;
-                }
-                LocalDate date = LocalDate.of(year, scanner.nextInt(), scanner.nextInt());
-                if (this.minDate == null || date.isBefore(minDate)) {
-                    this.minDate = date;
-                }
-                if (this.maxDate == null || date.isAfter(maxDate)) {
-                    this.maxDate = date;
-                }
-            }
-        } catch (InputMismatchException e) {
-            System.out.println("Среди входных данных передано не число.\n" + e.getMessage());
+            this.stream = Stream.of(input.split("\\s+")).filter(StreamFilter::isInteger).map(Integer::parseInt);
+        } catch (NumberFormatException e) {
+            System.out.println(e.getMessage());
             System.exit(1);
-        } catch (DateTimeException e) {
-            System.out.println("Передана некорректная дата.");
         }
         scanner.close();
     }
 
     public void execute() {
-        if (this.minDate == null || this.maxDate == null) {
-            System.out.println("Минимальная или максимальная дата отсутствует.");
-            return;
+        StreamFilter<Integer> streamFilter = new StreamFilter<>(this.predicate);
+        Stream<Integer> filteredStream = streamFilter.filter(this.stream);
+        filteredStream.forEach(n -> System.out.print(n + " "));
+        this.stream.close();
+    }
+}
+
+class StreamFilter<T> {
+    private final Predicate<T> predicate;
+
+    public StreamFilter(Predicate<T> predicate) {
+        this.predicate = predicate;
+    }
+
+    public Stream<T> filter(Stream<T> stream) {
+        return stream.filter(predicate);
+    }
+
+    public static boolean isInteger(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
         }
-        System.out.println("Число дней между минимальной и максимальной датами: "
-                + ChronoUnit.DAYS.between(this.minDate, this.maxDate));
     }
 }
